@@ -74,6 +74,7 @@ namespace ds {
         }
 
         void add(T data) {
+            size++;
             if (!root) {
                 root = new Node(std::move(data));
                 root->left = nullptr;
@@ -95,7 +96,6 @@ namespace ds {
 
                 node = data > node->data ? node->right : node->left;
             }
-            size++;
         }
 
         void foreach(std::function<void(const T&)> action) const {
