@@ -107,12 +107,12 @@ namespace ds {
         }
 
         [[nodiscard]]
-        bool is_empty() const {
+        bool is_empty() const noexcept {
             return size == 0;
         }
 
         [[nodiscard]]
-        bool is_present(const T& data) {
+        bool is_present(const T& data) const noexcept {
             Node* node = root;
             while (node) {
                 if (data == node->data) {
