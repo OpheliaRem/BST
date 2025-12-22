@@ -13,7 +13,7 @@ namespace ds {
             Node* left;
             Node* right;
 
-            Node(T data) : data{std::move(data)}, left{nullptr}, right{nullptr} {}
+            explicit Node(T data) : data{std::move(data)}, left{nullptr}, right{nullptr} {}
         };
 
         Node* root;
