@@ -1,9 +1,7 @@
 #pragma once
 
-#include <algorithm>
 #include <cstddef>
 #include <functional>
-#include <stdexcept>
 
 namespace ds {
     enum class BstTraverseOrder {
