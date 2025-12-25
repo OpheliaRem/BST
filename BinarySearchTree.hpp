@@ -6,6 +6,12 @@
 #include <stdexcept>
 
 namespace ds {
+    enum class BstTraverseOrder {
+        ASCENDING,
+        DESCENDING,
+        FROM_ROOT,
+    };
+
     template<typename T>
     class BinarySearchTree {
         struct Node {
@@ -32,26 +38,100 @@ namespace ds {
             remove_node_from(right);
         }
 
-        void perform_action_for_node(Node* node, std::function<void(const T&)> action) const {
-            if (!node) {
-                return;
+        void dispatch_action(std::function<void(const T&)> action, BstTraverseOrder order) const {
+            switch (order) {
+            case BstTraverseOrder::ASCENDING:
+                return asc_perform_action_for_node(root, action);
+            case BstTraverseOrder::DESCENDING:
+                return desc_perform_action_for_node(root, action);
+            case BstTraverseOrder::FROM_ROOT:
+                return from_root_perform_action_for_node(root, action);
+            default: 
+                throw std::out_of_range("Unknown way of traversal");
             }
-
-            action(node->data);
-
-            perform_action_for_node(node->left, action);
-            perform_action_for_node(node->right, action);
         }
 
-        void perform_action_for_node(Node* node, std::function<void(T&)> action) {
+        void dispatch_action(std::function<void(T&)> action, BstTraverseOrder order) {
+            switch (order) {
+            case BstTraverseOrder::ASCENDING:
+                return asc_perform_action_for_node(root, action);
+            case BstTraverseOrder::DESCENDING:
+                return desc_perform_action_for_node(root, action);
+            case BstTraverseOrder::FROM_ROOT:
+                return from_root_perform_action_for_node(root, action);
+            default: 
+                throw std::out_of_range("Unknown way of traversal");
+            }
+        }
+
+        void from_root_perform_action_for_node(Node* node, std::function<void(const T&)> action) const {
             if (!node) {
                 return;
             }
 
             action(node->data);
 
-            perform_action_for_node(node->left, action);
-            perform_action_for_node(node->right, action);
+            from_root_perform_action_for_node(node->left, action);
+            from_root_perform_action_for_node(node->right, action);
+        }
+
+        void from_root_perform_action_for_node(Node* node, std::function<void(T&)> action) {
+            if (!node) {
+                return;
+            }
+
+            action(node->data);
+
+            from_root_perform_action_for_node(node->left, action);
+            from_root_perform_action_for_node(node->right, action);
+        }
+
+        void asc_perform_action_for_node(Node* node, std::function<void(const T&)> action) const {
+            if (!node) {
+                return;
+            }
+
+            asc_perform_action_for_node(node->left, action);
+
+            action(node->data);
+
+            asc_perform_action_for_node(node->right, action);
+        }
+
+        void asc_perform_action_for_node(Node* node, std::function<void(T&)> action) {
+            if (!node) {
+                return;
+            }
+
+            asc_perform_action_for_node(node->left, action);
+
+            action(node->data);
+
+            asc_perform_action_for_node(node->right, action);
+        }
+
+        void desc_perform_action_for_node(Node* node, std::function<void(const T&)> action) const {
+            if (!node) {
+                return;
+            }
+
+            desc_perform_action_for_node(node->right, action);
+        
+            action(node->data);
+
+            desc_perform_action_for_node(node->left, action);
+        }
+
+        void desc_perform_action_for_node(Node* node, std::function<void(T&)> action) {
+            if (!node) {
+                return;
+            }
+
+            desc_perform_action_for_node(node->right, action);
+        
+            action(node->data);
+
+            desc_perform_action_for_node(node->left, action);
         }
 
     public:
@@ -98,12 +178,12 @@ namespace ds {
             }
         }
 
-        void foreach(std::function<void(const T&)> action) const {
-            perform_action_for_node(root, action);
+        void foreach(std::function<void(const T&)> action, BstTraverseOrder order = BstTraverseOrder::ASCENDING) const {
+            dispatch_action(action, order);
         }
 
-        void foreach(std::function<void(T&)> action) {
-            perform_action_for_node(root, action);
+        void foreach(std::function<void(T&)> action, BstTraverseOrder order = BstTraverseOrder::ASCENDING) {
+            dispatch_action(action, order);
         }
 
         [[nodiscard]]

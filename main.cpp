@@ -38,5 +38,32 @@ int main() {
         }
     });
 
+    std::println("Ascending order:");
+    tree.foreach(
+        [](const int& val){
+            std::print("{} ", val);
+        },
+        ds::BstTraverseOrder::ASCENDING
+    );
+    std::println("");
+
+    std::println("Descending order:");
+    tree.foreach(
+        [](const int& val){
+            std::print("{} ", val);
+        },
+        ds::BstTraverseOrder::DESCENDING
+    );
+    std::println("");
+
+    std::println("From root order:");
+    tree.foreach(
+        [](const int& val){
+            std::print("{} ", val);
+        },
+        ds::BstTraverseOrder::FROM_ROOT
+    );
+    std::println("");
+
     return 0;
 }
