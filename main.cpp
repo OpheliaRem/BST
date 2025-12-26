@@ -1,6 +1,13 @@
 #include <BinarySearchTree.hpp>
 #include <print>
 
+void print_tree(const ds::BinarySearchTree<int>& tree) {
+    tree.foreach([](const int& val) {
+        std::print("{} ", val);
+    });
+    std::println("");
+}
+
 int main() {
     ds::BinarySearchTree<int> tree;
 
@@ -11,10 +18,7 @@ int main() {
     tree.add(4);
     tree.add(1);
 
-    tree.foreach([](const int& val) {
-        std::print("{} ", val);
-    });
-    std::println("");
+    print_tree(tree);
 
     int& eleven = tree.find(11);
 
@@ -39,13 +43,7 @@ int main() {
     });
 
     std::println("Ascending order:");
-    tree.foreach(
-        [](const int& val){
-            std::print("{} ", val);
-        },
-        ds::BstTraverseOrder::ASCENDING
-    );
-    std::println("");
+    print_tree(tree);
 
     std::println("Descending order:");
     tree.foreach(
@@ -64,6 +62,20 @@ int main() {
         ds::BstTraverseOrder::FROM_ROOT
     );
     std::println("");
+
+    tree.add(1);
+    tree.add(1);
+    tree.add(1);
+    tree.add(1);
+    tree.add(1);
+
+    tree.add(19);
+    tree.add(19);
+    tree.add(19);
+    tree.add(19);
+
+    std::println("\nTrying to add duplicates:");
+    print_tree(tree);
 
     return 0;
 }

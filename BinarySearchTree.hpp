@@ -162,6 +162,10 @@ namespace ds {
 
             Node* node = root;
             while (true) {
+                if (node->data == data) {
+                    return;
+                }
+
                 if (!(node->left) && data <= node->data) {
                     node->left = new Node(std::move(data));
                     return;
