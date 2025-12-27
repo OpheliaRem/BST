@@ -1,5 +1,7 @@
 #include <BinarySearchTree.hpp>
 #include <print>
+#include <stdexcept>
+#include <vector>
 
 void print_tree(const ds::BinarySearchTree<int>& tree) {
     tree.foreach([](const int& val) {
@@ -76,6 +78,36 @@ int main() {
 
     std::println("\nTrying to add duplicates:");
     print_tree(tree);
+
+    tree.remove(6);
+
+    std::println("\nTrying to remove root:");
+    tree.foreach(
+        [](const int& val){
+            std::print("{} ", val);
+        },
+        ds::BstTraverseOrder::FROM_ROOT
+    );
+    std::println("");
+
+    std::println("\nTrying to remove all the elements one by one:");
+    std::vector<int> values;
+    tree.foreach(
+        [&values](const int& val) {
+            values.push_back(val);
+        }
+    );
+
+    for (int val : values) {
+        print_tree(tree);
+        tree.remove(val);
+    }
+    print_tree(tree);
+
+    if (!tree.is_empty()) {
+        std::println("size = {}", tree.get_size());
+        throw std::logic_error("Something is wrong with the algorithm");
+    }
 
     return 0;
 }

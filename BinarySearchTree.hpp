@@ -2,6 +2,7 @@
 
 #include <cstddef>
 #include <functional>
+#include <stdexcept>
 
 namespace ds {
     enum class BstTraverseOrder {
@@ -132,6 +133,70 @@ namespace ds {
             desc_perform_action_for_node(node->left, action);
         }
 
+        enum class DescendantsPresence {
+            NO,
+            LEFT,
+            RIGHT,
+            BOTH,
+        };
+
+        DescendantsPresence get_descendants_presence(const Node* node) const noexcept {
+            if (!(node->left) && !(node->right)) {
+                return DescendantsPresence::NO;
+            }
+
+            if (!(node->left) && node->right) {
+                return DescendantsPresence::RIGHT;
+            }
+
+            if (node->left && !(node->right)) {
+                return DescendantsPresence::LEFT;
+            }
+
+            return DescendantsPresence::BOTH;
+        }
+
+        void perform_removing(Node*& to_remove) {
+            Node* left;
+            Node* right;
+            switch (get_descendants_presence(to_remove)) {
+            case DescendantsPresence::NO:
+                delete to_remove;
+                to_remove = nullptr;
+                return;
+            case DescendantsPresence::LEFT:
+                left = to_remove->left;
+                delete to_remove;
+                to_remove = left;
+                return;
+            case DescendantsPresence::RIGHT:
+                right = to_remove->right;
+                delete to_remove;
+                to_remove = right;
+                return;
+            case DescendantsPresence::BOTH:
+                right = to_remove->right;
+                left = to_remove->left;
+                delete to_remove;
+                to_remove = right;
+
+                Node* node = to_remove;
+                while (true) {
+                    if (!(node->left) && left->data < node->data) {
+                        node->left = left;
+                        return;
+                    }
+
+                    if (!(node->right) && right->data > node->data) {
+                        node->right = right;
+                        return;
+                    }
+
+                    node = left->data < node->data ? node->left : node->right;
+                }
+            }
+        }
+
     public:
 
         BinarySearchTree() : root{nullptr}, size{0} {}
@@ -163,6 +228,7 @@ namespace ds {
             Node* node = root;
             while (true) {
                 if (node->data == data) {
+                    size--;
                     return;
                 }
 
@@ -191,6 +257,11 @@ namespace ds {
         [[nodiscard]]
         bool is_empty() const noexcept {
             return size == 0;
+        }
+
+        [[nodiscard]]
+        std::size_t get_size() const noexcept {
+            return size;
         }
 
         [[nodiscard]]
@@ -265,6 +336,34 @@ namespace ds {
             }
 
             return node->data;
+        }
+
+        void remove(const T& data) {
+            if (is_empty()) {
+                throw std::out_of_range("BST is empty");
+            }
+
+            if (data == root->data) {
+                size--;
+                return perform_removing(root);
+            }
+
+            Node* node = root;
+            while (node) {
+                if (node->left && node->left->data == data) {
+                    size--;
+                    return perform_removing(node->left);
+                }
+
+                if (node->right && node->right->data == data) {
+                    size--;
+                    return perform_removing(node->right);
+                }
+
+                node = data < node->data ? node->left : node->right;
+            }
+
+            throw std::logic_error("Is not present in BST");
         }
     };
 }
